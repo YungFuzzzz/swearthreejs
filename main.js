@@ -129,9 +129,6 @@ directionalLight.shadow.camera.bottom = -10;
 directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
 
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2);
-scene.add(directionalLightHelper);
-
 camera.position.z = 2.5;
 camera.position.y = 3.5;
 camera.rotation.x = -0.2;
