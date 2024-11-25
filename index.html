@@ -16,8 +16,29 @@
     </div>
 
     <div id="content">
-    <script type="module" src="/main.js"></script>
-  </div>
+      <script type="module" src="/main.js"></script>
+    </div>
+
+    <div id="menu">
+      <img src="assets/images/preloader-logo.webp" alt="Logo">
+      
+      <!-- Color Picker -->
+      <label for="color-picker">Select Color:</label>
+      <input type="color" id="color-picker" value="#ff0000">
+
+      <!-- Material Selector -->
+      <label for="material-selector">Select Material:</label>
+      <select id="material-selector">
+        <option value="leather">Leather</option>
+        <option value="fabric">Fabric</option>
+        <option value="rubber">Rubber</option>
+        <option value="metal">Metallic</option>
+      </select>
+
+      <!-- Apply Button -->
+      <button id="apply-customization">Apply</button>
+      <button id="buy-btn">Buy Now</button>
+    </div>
   <script src="preloader.js"></script>
   </body>
 </html>

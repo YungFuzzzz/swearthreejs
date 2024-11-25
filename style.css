@@ -51,3 +51,62 @@ body {
   font-weight: bold;
   text-align: center;
 }
+
+#menu {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  width: 260px;
+  height: 100vh;
+  padding: 15px;
+  background: white;
+  border-radius: 0px 0px 0px 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+}
+
+#menu img {
+  width: 230px;
+  display: block;
+  margin: 0 auto;
+}
+
+#menu label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 14px;
+}
+
+#menu input,
+#menu select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#menu #apply-customization,
+#menu #buy-btn {
+  width: 100%;
+  padding: 8px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 0px;
+  font-size: 14px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+}
+
+#menu #apply-customization:hover,
+#menu #buy-btn:hover {
+  background: #333;
+}
+
+#menu #buy-btn {
+  margin-top: 510px;
+}
