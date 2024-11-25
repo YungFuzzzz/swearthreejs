@@ -31,31 +31,6 @@ const sphereMaterial = new THREE.MeshBasicMaterial({ map: texture360, side: THRE
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 
-
-const swearLoader = new GLTFLoader();
-swearLoader.load('/assets/models/swear.glb', (gltf) => {
-    gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({ color: 0x7cfc00, emissive: 0x7cfc00 });
-        }
-    });
-
-    gltf.scene.position.y = 6.5;
-    gltf.scene.position.z = -6;
-    gltf.scene.scale.set(10, 10, 10);
-    scene.add(gltf.scene);
-
-    gsap.to(gltf.scene.rotation, {
-        x: Math.PI * 2,
-        duration: 5,
-        repeat: -1,
-        ease: "none",
-    });
-}, undefined, (error) => {
-    console.error(error);
-});
-
-
 const worldLoader = new GLTFLoader();
 worldLoader.load(
     '/assets/models/world.glb',
@@ -165,7 +140,7 @@ window.addEventListener('click', (event) => {
 
                 
                 selectedMesh = clickedMesh;
-                selectedMesh.material.emissive = new THREE.Color(0x00ff00); 
+                selectedMesh.material.emissive = new THREE.Color(0x7cfc00); 
             }
         }
     }

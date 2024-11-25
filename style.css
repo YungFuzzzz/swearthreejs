@@ -1,11 +1,11 @@
-/* General Reset */
+
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-/* Preloader */
+
 #preloader {
   position: fixed;
   top: 0;
@@ -52,22 +52,22 @@ body {
   text-align: center;
 }
 
-/* Menu Styling */
+
 #menu {
   position: fixed;
   top: 0;
   right: 0;
   width: 260px;
-  height: 100vh; /* Full viewport height for responsive design */
+  height: 100vh; 
   padding: 15px;
   background: white;
   border-radius: 0 0 0 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   font-family: Arial, sans-serif;
-  display: flex; /* Flexbox for layout */
+  display: flex; 
   flex-direction: column;
-  justify-content: space-between; /* Push elements apart */
+  justify-content: space-between; 
 }
 
 #menu img {
@@ -129,6 +129,6 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   text-align: center;
-  margin-top: auto; /* Push button to the bottom */
+  margin-top: auto; 
   margin-bottom: 40px;
 }
