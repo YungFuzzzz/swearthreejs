@@ -114,8 +114,28 @@ body {
 }
 
 #menu #apply-customization:hover,
-#menu #buy-btn:hover {
+#menu #buy-btn:hover,
+#menu #reset-btn:hover {
   background: #333;
+}
+
+.options #reset-btn {
+  background: black;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.options #reset-btn img {
+  
+  transform: scaleX(-1);
+  width: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
 
 #menu #buy-btn {

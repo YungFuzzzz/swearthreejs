@@ -22,21 +22,25 @@
     <div id="menu">
       <img src="assets/images/preloader-logo.webp" alt="Logo">
       
-      <!-- Color Picker -->
+      
       <label for="color-picker">Select Color:</label>
-      <input type="color" id="color-picker" value="#ff0000">
+      <input type="color" id="color-picker" value="#ffffff">
 
-      <!-- Material Selector -->
+      
       <label for="material-selector">Select Material:</label>
       <select id="material-selector">
         <option value="leather">Leather</option>
         <option value="fabric">Fabric</option>
         <option value="rubber">Rubber</option>
-        <option value="metal">Metallic</option>
+        <option value="metal">Metal</option>
+        <option value="denim">Denim</option>
       </select>
 
-      <!-- Apply Button -->
-      <button id="apply-customization">Apply Changes</button>
+      
+       <div class="options">
+        <button id="apply-customization">Apply Changes</button>
+        <button id="reset-btn"><img src="assets/icons/reset.svg" alt="reset button"></button>
+      </div>
       <button id="buy-btn">Buy Now</button>
     </div>
   <script src="preloader.js"></script>

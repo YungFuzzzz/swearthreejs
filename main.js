@@ -23,8 +23,8 @@ controls.enablePan = false;
 controls.enableRotate = false;
 
 
-const loader360 = new THREE.TextureLoader();
-const texture360 = loader360.load('/assets/images/skybox.png');
+const textureLoader = new THREE.TextureLoader();
+const texture360 = textureLoader.load('/assets/images/skybox.png');
 const sphereGeometry = new THREE.SphereGeometry(100, 32, 32);
 sphereGeometry.rotateY(Math.PI / 2);
 const sphereMaterial = new THREE.MeshBasicMaterial({ map: texture360, side: THREE.DoubleSide });
@@ -94,7 +94,7 @@ scene.add(plane);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
@@ -122,14 +122,6 @@ let components = ["inside", "laces", "outside_1", "outside_2", "outside_3", "sol
 const minZoom = 1.5; 
 const maxZoom = 3; 
 
-window.addEventListener('wheel', (event) => {
-    if (event.deltaY > 0) {
-        camera.position.z = Math.min(camera.position.z + 0.1, maxZoom);
-    } else {
-        camera.position.z = Math.max(camera.position.z - 0.1, minZoom);
-    }
-});
-
 let isMouseDown = false;
 let previousMouseX = 0;
 let previousMouseY = 0;
@@ -154,26 +146,38 @@ window.addEventListener('click', (event) => {
     const firstIntersect = intersects[0];
 
     if (firstIntersect && components.includes(firstIntersect.object.name)) {
-        
         if (highlightedObject === firstIntersect.object) {
             
             if (highlightedObject.material.emissive) {
                 highlightedObject.material.emissive.set(0x000000); 
             }
+            if (highlightedObject.material.wireframe !== undefined) {
+                highlightedObject.material.wireframe = false; 
+            }
             highlightedObject = null;
         } else {
             
             if (highlightedObject && highlightedObject.material.emissive) {
-                highlightedObject.material.emissive.set(0x000000);
+                highlightedObject.material.emissive.set(0x000000); 
             }
+            if (highlightedObject && highlightedObject.material.wireframe !== undefined) {
+                highlightedObject.material.wireframe = false; 
+            }
+    
             
             if (firstIntersect.object.material.emissive) {
-                firstIntersect.object.material.emissive.set(0x00ff00);
-                highlightedObject = firstIntersect.object;
+                firstIntersect.object.material.emissive.set(0x00ff00); 
             }
+            if (firstIntersect.object.material.wireframe !== undefined) {
+                firstIntersect.object.material.wireframe = true; 
+            }
+    
+            
+            highlightedObject = firstIntersect.object;
         }
     } else {
-    }    
+        
+    }      
 });
 
 
@@ -206,19 +210,114 @@ window.addEventListener('mouseup', () => {
 
 
 const colorPicker = document.getElementById("color-picker");
+const applyChangesButton = document.getElementById("apply-customization");
+const materialSelector = document.getElementById("material-selector");
 
+let selectedColor = null; 
+let selectedMaterial = null;
+
+const loadScaledTexture = (url, scaleFactor) => {
+    const texture = textureLoader.load(url);
+    texture.repeat.set(scaleFactor, scaleFactor);
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    return texture;
+  };
+  
+  
+  const scaleFactor = 3; 
+  
+  
+  const denimMaterial = new THREE.MeshStandardMaterial({
+    map: loadScaledTexture('assets/materials/denim/denim_diffuse.jpg', scaleFactor),
+    normalMap: loadScaledTexture('assets/materials/denim/denim_normal.jpg', scaleFactor),
+    roughnessMap: loadScaledTexture('assets/materials/denim/denim_roughness.jpg', scaleFactor),
+    roughness: 0.8,
+    metalness: 0.2,
+  });
+
+  const rubberMaterial = new THREE.MeshStandardMaterial({
+    map: loadScaledTexture('assets/materials/rubber/rubber_diffuse.jpg', scaleFactor),
+    normalMap: loadScaledTexture('assets/materials/rubber/rubber_normal.jpg', scaleFactor),
+    roughnessMap: loadScaledTexture('assets/materials/rubber/rubber_roughness.jpg', scaleFactor),
+    roughness: 0.8,
+    metalness: 0,
+  });
+
+  const leatherMaterial = new THREE.MeshStandardMaterial({
+    map: loadScaledTexture('assets/materials/leather/leather_diffuse.jpg', scaleFactor),
+    normalMap: loadScaledTexture('assets/materials/leather/leather_normal.jpg', scaleFactor),
+    roughnessMap: loadScaledTexture('assets/materials/leather/leather_roughness.jpg', scaleFactor),
+    roughness: 0.8,
+    metalness: 0,
+  });
+  
+  
+  const materialOptions = {
+    leather: leatherMaterial,
+    fabric: new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.9, metalness: 0.1 }),
+    rubber: rubberMaterial,
+    metal: new THREE.MeshStandardMaterial({ roughness: 0.1, metalness: 1 }),
+    denim: denimMaterial,  
+  };
 
 colorPicker.addEventListener("input", (event) => {
-    const selectedColor = event.target.value; 
+    selectedColor = event.target.value;
+});
 
-    
+materialSelector.addEventListener("change", (event) => {
+    selectedMaterial = materialOptions[event.target.value];
+});
+
+applyChangesButton.addEventListener('click', () => {
     if (highlightedObject) {
-        highlightedObject.material.color.set(selectedColor); 
-        highlightedObject.object.material.metalness = 0.9; 
-        highlightedObject.object.material.roughness = 0.1; 
+      if (selectedMaterial) {
+        highlightedObject.material = selectedMaterial.clone();
+        highlightedObject.material.color.set(selectedColor);
+      } else {
+        highlightedObject.material.color.set(selectedColor);
+      }
+    }
+  });
+
+window.addEventListener('wheel', (event) => {
+    if (event.deltaY > 0) {
+        camera.position.z = Math.min(camera.position.z + 0.1, maxZoom);
+    } else {
+        camera.position.z = Math.max(camera.position.z - 0.1, minZoom);
     }
 });
 
+const resetBtn = document.getElementById('reset-btn');
+// Store the default materials for each shoe component
+// Store the default materials for each shoe component
+const defaultMaterials = {
+    inside: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "inside"
+    laces: new THREE.MeshStandardMaterial({ color: 0xffffff }),  // Default material for "laces"
+    outside_1: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_1"
+    outside_2: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_2"
+    outside_3: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_3"
+    sole_bottom: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "sole_bottom"
+    sole_top: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "sole_top"
+  };
+  
+  // Reset the materials and colors of all components of the shoe to their default state
+  resetBtn.addEventListener('click', () => {
+    if (shoe) {
+      // Traverse through each child in the shoe model
+      shoe.traverse((child) => {
+        // Check if the child is a mesh (this ensures it's a 3D object that can have a material)
+        if (child.isMesh && defaultMaterials[child.name]) {
+          // Reset the material to the default one based on the component name
+          child.material = defaultMaterials[child.name];
+          // Optionally, reset the emissive color or any other custom property you might be using
+          child.material.emissive.set(0x000000); // Reset emissive to black
+          child.material.wireframe = false; // If wireframe was used, reset to false
+        }
+      });
+    }
+  });
+  
+  
 
 function animate() {
     scene.rotation.y += 0.007; 
