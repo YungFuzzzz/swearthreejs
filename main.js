@@ -24,7 +24,7 @@ controls.enableRotate = false;
 
 const loader360 = new THREE.TextureLoader();
 const texture360 = loader360.load('/assets/images/envimage.png');
-const sphereGeometry = new THREE.SphereGeometry(50, 32, 32);
+const sphereGeometry = new THREE.SphereGeometry(100, 32, 32);
 sphereGeometry.rotateY(Math.PI / 2);
 const sphereMaterial = new THREE.MeshBasicMaterial({ map: texture360, side: THREE.DoubleSide });
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -57,9 +57,10 @@ swearLoader.load('/assets/models/swear.glb', (gltf) => {
 
 const loader = new GLTFLoader();
 loader.load(
-    '/assets/models/barrel.glb',
+    '/assets/models/world.glb',
     (gltf) => {
         gltf.scene.position.set(0, 0.8, 0);
+        gltf.scene.rotation.y = -Math.PI / 2;
         scene.add(gltf.scene);
         gltf.scene.traverse((child) => {
             if (child.isMesh) {
@@ -172,5 +173,6 @@ window.addEventListener('mouseup', () => {
 });
 
 function animate() {
+    scene.rotation.y += 0.01;
     renderer.render(scene, camera);
 }
