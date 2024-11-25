@@ -17,8 +17,8 @@ renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom= false;
 controls.enableDamping = true;
-controls.enableZoom = false;
 controls.enablePan = false;
 controls.enableRotate = false;
 
@@ -50,9 +50,7 @@ worldLoader.load(
 
 const shoeLoader = new GLTFLoader();
 let shoe;
-let selectedMesh = null;
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+
 
 shoeLoader.load(
     '/assets/models/swearshoe.glb',
@@ -115,37 +113,22 @@ window.addEventListener('resize', () => {
 });
 
 
-window.addEventListener('click', (event) => {
-    
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let currentIntersect = null;
 
-    
-    raycaster.setFromCamera(mouse, camera);
+let components = ["inside", "laces", "outside_1", "outside_2", "outside_3", "sole_bottom", "sole_top"];
 
-    if (shoe) {
-        const intersects = raycaster.intersectObject(shoe, true); 
-        if (intersects.length > 0) {
-            const clickedMesh = intersects[0].object;
+const minZoom = 1.5; 
+const maxZoom = 3; 
 
-            
-            if (selectedMesh === clickedMesh) {
-                selectedMesh.material.emissive.set(0x000000); 
-                selectedMesh = null; 
-            } else {
-                
-                if (selectedMesh) {
-                    selectedMesh.material.emissive.set(0x000000);
-                }
-
-                
-                selectedMesh = clickedMesh;
-                selectedMesh.material.emissive = new THREE.Color(0x7cfc00); 
-            }
-        }
+window.addEventListener('wheel', (event) => {
+    if (event.deltaY > 0) {
+        camera.position.z = Math.min(camera.position.z + 0.1, maxZoom);
+    } else {
+        camera.position.z = Math.max(camera.position.z - 0.1, minZoom);
     }
 });
-
 
 let isMouseDown = false;
 let previousMouseX = 0;
@@ -158,7 +141,46 @@ window.addEventListener('mousedown', (event) => {
     previousMouseY = event.clientY;
 });
 
+
+let highlightedObject = null;
+
+
+window.addEventListener('click', (event) => {
+    
+    raycaster.setFromCamera(mouse, camera);
+
+    
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    const firstIntersect = intersects[0];
+
+    if (firstIntersect && components.includes(firstIntersect.object.name)) {
+        
+        if (highlightedObject === firstIntersect.object) {
+            
+            if (highlightedObject.material.emissive) {
+                highlightedObject.material.emissive.set(0x000000); 
+            }
+            highlightedObject = null;
+        } else {
+            
+            if (highlightedObject && highlightedObject.material.emissive) {
+                highlightedObject.material.emissive.set(0x000000);
+            }
+            
+            if (firstIntersect.object.material.emissive) {
+                firstIntersect.object.material.emissive.set(0x00ff00);
+                highlightedObject = firstIntersect.object;
+            }
+        }
+    } else {
+    }    
+});
+
+
 window.addEventListener('mousemove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
     if (isMouseDown && shoe) {
         let deltaX = event.clientX - previousMouseX;
         let deltaY = event.clientY - previousMouseY;
@@ -171,9 +193,32 @@ window.addEventListener('mousemove', (event) => {
     }
 });
 
+
+window.addEventListener('mousedown', (event) => {
+    isMouseDown = true;
+    previousMouseX = event.clientX;
+    previousMouseY = event.clientY;
+});
+
 window.addEventListener('mouseup', () => {
     isMouseDown = false;
 });
+
+
+const colorPicker = document.getElementById("color-picker");
+
+
+colorPicker.addEventListener("input", (event) => {
+    const selectedColor = event.target.value; 
+
+    
+    if (highlightedObject) {
+        highlightedObject.material.color.set(selectedColor); 
+        highlightedObject.object.material.metalness = 0.9; 
+        highlightedObject.object.material.roughness = 0.1; 
+    }
+});
+
 
 function animate() {
     scene.rotation.y += 0.007; 
