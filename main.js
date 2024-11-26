@@ -8,6 +8,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -20,6 +21,10 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
+
+const stats = new Stats();
+stats.showPanel(0); // 0: FPS, 1: MS, 2: MB, 3+: custom
+document.body.appendChild(stats.dom);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableZoom= false;
@@ -119,6 +124,22 @@ scene.add(pointLight1);
 const pointLight2 = new THREE.PointLight(0xffffff, 10);
 pointLight2.position.set(-4, 5, 0);
 scene.add(pointLight2);
+
+const pointLight3 = new THREE.PointLight(0xffffff, 20);
+pointLight3.position.set(-8.2, 1.5, 4.7);
+scene.add(pointLight3);
+
+const pointLight4 = new THREE.PointLight(0xffffff, 20);
+pointLight4.position.set(3, 5, -7.8);
+scene.add(pointLight4);
+
+const pointLight5 = new THREE.PointLight(0xffffff, 20);
+pointLight5.position.set(1.5, 5, -7.8);
+scene.add(pointLight5);
+
+const pointLight6 = new THREE.PointLight(0xffffff, 20);
+pointLight6.position.set(-3, 5, -7.8);
+scene.add(pointLight6);
 
 camera.position.z = 2.5;
 camera.position.y = 3.5;
@@ -342,8 +363,10 @@ vignettePass.uniforms['offset'].value = 1;
 vignettePass.uniforms['darkness'].value = 0.8;
 composer.addPass(vignettePass);
 
+
 function animate() {
     scene.rotation.y += 0.007; 
     renderer.render(scene, camera);
     composer.render();
+    stats.end();
 }
