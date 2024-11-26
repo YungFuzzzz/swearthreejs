@@ -3,6 +3,11 @@ import * as THREE from 'three';
 import { gsap } from "gsap";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -22,6 +27,12 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableRotate = false;
 
+const hdrLoader = new RGBELoader();
+hdrLoader.load('assets/images/hansapplatz_4k.hdr', function (texture) {
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    scene.environment = texture; 
+    scene.background = texture; 
+});
 
 const textureLoader = new THREE.TextureLoader();
 const texture360 = textureLoader.load('/assets/images/skybox.png');
@@ -94,12 +105,20 @@ scene.add(plane);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+const directionalLight = new THREE.DirectionalLight(0xe0ffff, 5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
 directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
+
+const pointLight1 = new THREE.PointLight(0xffffff, 10);
+pointLight1.position.set(4, 5, 0);
+scene.add(pointLight1);
+
+const pointLight2 = new THREE.PointLight(0xffffff, 10);
+pointLight2.position.set(-4, 5, 0);
+scene.add(pointLight2);
 
 camera.position.z = 2.5;
 camera.position.y = 3.5;
@@ -288,38 +307,46 @@ window.addEventListener('wheel', (event) => {
 });
 
 const resetBtn = document.getElementById('reset-btn');
-// Store the default materials for each shoe component
-// Store the default materials for each shoe component
+
+
 const defaultMaterials = {
-    inside: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "inside"
-    laces: new THREE.MeshStandardMaterial({ color: 0xffffff }),  // Default material for "laces"
-    outside_1: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_1"
-    outside_2: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_2"
-    outside_3: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), // Default material for "outside_3"
-    sole_bottom: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "sole_bottom"
-    sole_top: new THREE.MeshStandardMaterial({ color: 0xffffff }), // Default material for "sole_top"
+    inside: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
+    laces: new THREE.MeshStandardMaterial({ color: 0xffffff }),  
+    outside_1: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
+    outside_2: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
+    outside_3: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
+    sole_bottom: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
+    sole_top: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
   };
   
-  // Reset the materials and colors of all components of the shoe to their default state
+  
   resetBtn.addEventListener('click', () => {
     if (shoe) {
-      // Traverse through each child in the shoe model
+      
       shoe.traverse((child) => {
-        // Check if the child is a mesh (this ensures it's a 3D object that can have a material)
+        
         if (child.isMesh && defaultMaterials[child.name]) {
-          // Reset the material to the default one based on the component name
+          
           child.material = defaultMaterials[child.name];
-          // Optionally, reset the emissive color or any other custom property you might be using
-          child.material.emissive.set(0x000000); // Reset emissive to black
-          child.material.wireframe = false; // If wireframe was used, reset to false
+          
+          child.material.emissive.set(0x000000); 
+          child.material.wireframe = false; 
         }
       });
     }
   });
   
-  
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const vignettePass = new ShaderPass(VignetteShader);
+vignettePass.uniforms['offset'].value = 1;
+vignettePass.uniforms['darkness'].value = 0.8;
+composer.addPass(vignettePass);
 
 function animate() {
     scene.rotation.y += 0.007; 
     renderer.render(scene, camera);
+    composer.render();
 }
