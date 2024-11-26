@@ -44,7 +44,7 @@ scene.add(sphere);
 
 const worldLoader = new GLTFLoader();
 worldLoader.load(
-    '/assets/models/world.glb',
+    '/assets/models/world1.glb',
     (gltf) => {
         gltf.scene.position.set(0, 0.8, 0);
         gltf.scene.rotation.y = -Math.PI / 2;

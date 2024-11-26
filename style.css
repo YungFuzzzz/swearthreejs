@@ -67,7 +67,9 @@ body {
   font-family: Arial, sans-serif;
   display: flex; 
   flex-direction: column;
-  justify-content: space-between; 
+  justify-content: space-between;
+  /* add box shadow to the left side */
+  box-shadow: 0 0 24px rgba(43, 255, 0, 1);
 }
 
 #menu img {
