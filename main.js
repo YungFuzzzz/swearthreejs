@@ -247,7 +247,6 @@ const loadScaledTexture = (url, scaleFactor) => {
   
   
   const denimMaterial = new THREE.MeshStandardMaterial({
-    map: loadScaledTexture('assets/materials/denim/denim_diffuse.jpg', scaleFactor),
     normalMap: loadScaledTexture('assets/materials/denim/denim_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/denim/denim_roughness.jpg', scaleFactor),
     roughness: 0.8,
@@ -255,7 +254,6 @@ const loadScaledTexture = (url, scaleFactor) => {
   });
 
   const rubberMaterial = new THREE.MeshStandardMaterial({
-    map: loadScaledTexture('assets/materials/rubber/rubber_diffuse.jpg', scaleFactor),
     normalMap: loadScaledTexture('assets/materials/rubber/rubber_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/rubber/rubber_roughness.jpg', scaleFactor),
     roughness: 0.8,
@@ -263,7 +261,6 @@ const loadScaledTexture = (url, scaleFactor) => {
   });
 
   const leatherMaterial = new THREE.MeshStandardMaterial({
-    map: loadScaledTexture('assets/materials/leather/leather_diffuse.jpg', scaleFactor),
     normalMap: loadScaledTexture('assets/materials/leather/leather_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/leather/leather_roughness.jpg', scaleFactor),
     roughness: 0.8,
