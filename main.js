@@ -27,7 +27,7 @@ stats.showPanel(0); // 0: FPS, 1: MS, 2: MB, 3+: custom
 document.body.appendChild(stats.dom);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableZoom= false;
+controls.enableZoom = false;
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableRotate = false;
@@ -63,10 +63,8 @@ worldLoader.load(
     }
 );
 
-
 const shoeLoader = new GLTFLoader();
 let shoe;
-
 
 shoeLoader.load(
     '/assets/models/swearshoe.glb',
@@ -98,14 +96,12 @@ shoeLoader.load(
     }
 );
 
-
 const planeGeometry = new THREE.PlaneGeometry(20, 20, 5);
 const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotation.x = -Math.PI / 2;
 plane.receiveShadow = true;
 scene.add(plane);
-
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
@@ -145,13 +141,11 @@ camera.position.z = 2.5;
 camera.position.y = 3.5;
 camera.rotation.x = -0.2;
 
-
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -165,7 +159,8 @@ const maxZoom = 3;
 let isMouseDown = false;
 let previousMouseX = 0;
 let previousMouseY = 0;
-let rotationSpeed = 0.005;
+let rotationSpeed = 0.30;
+let shoeSpeed = 0.005;
 
 window.addEventListener('mousedown', (event) => {
     isMouseDown = true;
@@ -173,21 +168,16 @@ window.addEventListener('mousedown', (event) => {
     previousMouseY = event.clientY;
 });
 
-
 let highlightedObject = null;
 
-
 window.addEventListener('click', (event) => {
-    
     raycaster.setFromCamera(mouse, camera);
 
-    
     const intersects = raycaster.intersectObjects(scene.children, true);
     const firstIntersect = intersects[0];
 
     if (firstIntersect && components.includes(firstIntersect.object.name)) {
         if (highlightedObject === firstIntersect.object) {
-            
             if (highlightedObject.material.emissive) {
                 highlightedObject.material.emissive.set(0x000000); 
             }
@@ -196,30 +186,24 @@ window.addEventListener('click', (event) => {
             }
             highlightedObject = null;
         } else {
-            
             if (highlightedObject && highlightedObject.material.emissive) {
                 highlightedObject.material.emissive.set(0x000000); 
             }
             if (highlightedObject && highlightedObject.material.wireframe !== undefined) {
                 highlightedObject.material.wireframe = false; 
             }
-    
-            
+
             if (firstIntersect.object.material.emissive) {
                 firstIntersect.object.material.emissive.set(0x00ff00); 
             }
             if (firstIntersect.object.material.wireframe !== undefined) {
                 firstIntersect.object.material.wireframe = true; 
             }
-    
-            
+
             highlightedObject = firstIntersect.object;
         }
-    } else {
-        
-    }      
+    }
 });
-
 
 window.addEventListener('mousemove', (event) => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -229,25 +213,17 @@ window.addEventListener('mousemove', (event) => {
         let deltaX = event.clientX - previousMouseX;
         let deltaY = event.clientY - previousMouseY;
 
-        shoe.rotation.y += deltaX * rotationSpeed;
-        shoe.rotation.x += deltaY * rotationSpeed;
+        shoe.rotation.y += deltaX * shoeSpeed;  // Limit horizontal rotation speed
+        shoe.rotation.x += deltaY * shoeSpeed;  // Limit vertical rotation speed
 
         previousMouseX = event.clientX;
         previousMouseY = event.clientY;
     }
 });
 
-
-window.addEventListener('mousedown', (event) => {
-    isMouseDown = true;
-    previousMouseX = event.clientX;
-    previousMouseY = event.clientY;
-});
-
 window.addEventListener('mouseup', () => {
     isMouseDown = false;
 });
-
 
 const colorPicker = document.getElementById("color-picker");
 const applyChangesButton = document.getElementById("apply-customization");
@@ -261,41 +237,38 @@ const loadScaledTexture = (url, scaleFactor) => {
     texture.repeat.set(scaleFactor, scaleFactor);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     return texture;
-  };
-  
-  
-  const scaleFactor = 3; 
-  
-  
-  const denimMaterial = new THREE.MeshStandardMaterial({
+};
+
+const scaleFactor = 3; 
+
+const denimMaterial = new THREE.MeshStandardMaterial({
     normalMap: loadScaledTexture('assets/materials/denim/denim_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/denim/denim_roughness.jpg', scaleFactor),
     roughness: 0.8,
     metalness: 0.2,
-  });
+});
 
-  const rubberMaterial = new THREE.MeshStandardMaterial({
+const rubberMaterial = new THREE.MeshStandardMaterial({
     normalMap: loadScaledTexture('assets/materials/rubber/rubber_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/rubber/rubber_roughness.jpg', scaleFactor),
     roughness: 0.8,
     metalness: 0,
-  });
+});
 
-  const leatherMaterial = new THREE.MeshStandardMaterial({
+const leatherMaterial = new THREE.MeshStandardMaterial({
     normalMap: loadScaledTexture('assets/materials/leather/leather_normal.jpg', scaleFactor),
     roughnessMap: loadScaledTexture('assets/materials/leather/leather_roughness.jpg', scaleFactor),
     roughness: 0.8,
     metalness: 0,
-  });
-  
-  
-  const materialOptions = {
+});
+
+const materialOptions = {
     leather: leatherMaterial,
     fabric: new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.9, metalness: 0.1 }),
     rubber: rubberMaterial,
     metal: new THREE.MeshStandardMaterial({ roughness: 0.1, metalness: 1 }),
-    denim: denimMaterial,  
-  };
+    denim: denimMaterial,
+};
 
 colorPicker.addEventListener("input", (event) => {
     selectedColor = event.target.value;
@@ -307,14 +280,14 @@ materialSelector.addEventListener("change", (event) => {
 
 applyChangesButton.addEventListener('click', () => {
     if (highlightedObject) {
-      if (selectedMaterial) {
-        highlightedObject.material = selectedMaterial.clone();
-        highlightedObject.material.color.set(selectedColor);
-      } else {
-        highlightedObject.material.color.set(selectedColor);
-      }
+        if (selectedMaterial) {
+            highlightedObject.material = selectedMaterial.clone();
+            highlightedObject.material.color.set(selectedColor);
+        } else {
+            highlightedObject.material.color.set(selectedColor);
+        }
     }
-  });
+});
 
 window.addEventListener('wheel', (event) => {
     if (event.deltaY > 0) {
@@ -326,34 +299,28 @@ window.addEventListener('wheel', (event) => {
 
 const resetBtn = document.getElementById('reset-btn');
 
-
 const defaultMaterials = {
-    inside: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
-    laces: new THREE.MeshStandardMaterial({ color: 0xffffff }),  
-    outside_1: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
-    outside_2: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
-    outside_3: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }), 
-    sole_bottom: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
-    sole_top: new THREE.MeshStandardMaterial({ color: 0xffffff }), 
-  };
-  
-  
-  resetBtn.addEventListener('click', () => {
+    inside: new THREE.MeshStandardMaterial({ color: 0xffffff }),
+    laces: new THREE.MeshStandardMaterial({ color: 0xffffff }),
+    outside_1: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }),
+    outside_2: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }),
+    outside_3: new THREE.MeshStandardMaterial({ color: 0xFFFFFF }),
+    sole_bottom: new THREE.MeshStandardMaterial({ color: 0xffffff }),
+    sole_top: new THREE.MeshStandardMaterial({ color: 0xffffff }),
+};
+
+resetBtn.addEventListener('click', () => {
     if (shoe) {
-      
-      shoe.traverse((child) => {
-        
-        if (child.isMesh && defaultMaterials[child.name]) {
-          
-          child.material = defaultMaterials[child.name];
-          
-          child.material.emissive.set(0x000000); 
-          child.material.wireframe = false; 
-        }
-      });
+        shoe.traverse((child) => {
+            if (child.isMesh && defaultMaterials[child.name]) {
+                child.material = defaultMaterials[child.name];
+                child.material.emissive.set(0x000000); 
+                child.material.wireframe = false; 
+            }
+        });
     }
-  });
-  
+});
+
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
@@ -363,9 +330,17 @@ vignettePass.uniforms['offset'].value = 1;
 vignettePass.uniforms['darkness'].value = 0.8;
 composer.addPass(vignettePass);
 
+let lastTime = 0;
 
-function animate() {
-    scene.rotation.y += 0.007; 
+function animate(time) {
+    stats.begin();
+
+    const deltaTime = (time - lastTime) / 1000;  // Time in seconds
+    lastTime = time;
+
+    // Apply scene rotation with frame-rate independent speed
+    scene.rotation.y += rotationSpeed * deltaTime;
+
     renderer.render(scene, camera);
     composer.render();
     stats.end();
