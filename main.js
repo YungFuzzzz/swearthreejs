@@ -33,10 +33,10 @@ controls.enablePan = false;
 controls.enableRotate = false;
 
 const hdrLoader = new RGBELoader();
-hdrLoader.load('assets/images/hansapplatz_4k.hdr', function (texture) {
+hdrLoader.load('assets/images/world.hdr', function (texture) {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture; 
-    scene.background = texture; 
+    scene.background = texture;
 });
 
 const textureLoader = new THREE.TextureLoader();
@@ -100,7 +100,7 @@ shoeLoader.load(
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xe0ffff, 4);
+const directionalLight = new THREE.DirectionalLight(0xe0ffff, 2.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
@@ -157,18 +157,9 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-const outlineMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,   
-    side: THREE.BackSide,
-    linewidth: 2,
-    depthTest: false,  
-    opacity: 1,        
-    transparent: true
-});
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-let currentIntersect = null;
 
 let components = ["inside", "laces", "outside_1", "outside_2", "outside_3", "sole_bottom", "sole_top"];
 
@@ -297,7 +288,7 @@ const materialOptions = {
     leather: leatherMaterial,
     fabric: new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.9, metalness: 0.1 }),
     rubber: rubberMaterial,
-    metal: new THREE.MeshStandardMaterial({ roughness: 0.1, metalness: 1 }),
+    metal: new THREE.MeshStandardMaterial({  roughness: 0.05, metalness: 1 }),
     denim: denimMaterial,
 };
 
