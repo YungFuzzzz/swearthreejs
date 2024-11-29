@@ -135,10 +135,35 @@ camera.position.z = 2.5;
 camera.position.y = 3.5;
 camera.rotation.x = -0.2;
 
+function hideMenu() {
+    gsap.to("#menu-content", {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.in"
+    });
+}
+
+function showMenu() {
+    gsap.to("#menu-content", {
+        opacity: 1,
+        duration: 0.2,
+        ease: "power2.in"
+    });
+}
+
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const outlineMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,   // Outline color
+    side: THREE.BackSide,
+    linewidth: 2,
+    depthTest: false,  // To render the outline over other objects
+    opacity: 1,        // You can adjust opacity if needed
+    transparent: true
 });
 
 const raycaster = new THREE.Raycaster();
@@ -164,6 +189,7 @@ window.addEventListener('mousedown', (event) => {
 
 let highlightedObject = null;
 
+
 window.addEventListener('click', (event) => {
     raycaster.setFromCamera(mouse, camera);
 
@@ -173,12 +199,14 @@ window.addEventListener('click', (event) => {
     if (firstIntersect && components.includes(firstIntersect.object.name)) {
         if (highlightedObject === firstIntersect.object) {
             if (highlightedObject.material.emissive) {
-                highlightedObject.material.emissive.set(0x000000); 
+                highlightedObject.material.emissive.set(0x000000);
+                rotationSpeed = 0.30; 
             }
             if (highlightedObject.material.wireframe !== undefined) {
                 highlightedObject.material.wireframe = false; 
             }
             highlightedObject = null;
+            hideMenu();
         } else {
             if (highlightedObject && highlightedObject.material.emissive) {
                 highlightedObject.material.emissive.set(0x000000); 
@@ -188,16 +216,19 @@ window.addEventListener('click', (event) => {
             }
 
             if (firstIntersect.object.material.emissive) {
-                firstIntersect.object.material.emissive.set(0x00ff00); 
+                firstIntersect.object.material.emissive.set(0x00ff00);
+                rotationSpeed = 0.01;
             }
             if (firstIntersect.object.material.wireframe !== undefined) {
                 firstIntersect.object.material.wireframe = true; 
             }
 
             highlightedObject = firstIntersect.object;
+            showMenu();
         }
     }
 });
+
 
 window.addEventListener('mousemove', (event) => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -220,7 +251,7 @@ window.addEventListener('mouseup', () => {
 });
 
 const colorPicker = document.getElementById("color-picker");
-const applyChangesButton = document.getElementById("apply-customization");
+// const applyChangesButton = document.getElementById("apply-customization");
 const materialSelector = document.getElementById("material-selector");
 
 let selectedColor = null; 
@@ -266,18 +297,22 @@ const materialOptions = {
 
 colorPicker.addEventListener("input", (event) => {
     selectedColor = event.target.value;
-});
-
-materialSelector.addEventListener("change", (event) => {
-    selectedMaterial = materialOptions[event.target.value];
-});
-
-applyChangesButton.addEventListener('click', () => {
     if (highlightedObject) {
         if (selectedMaterial) {
             highlightedObject.material = selectedMaterial.clone();
             highlightedObject.material.color.set(selectedColor);
         } else {
+            highlightedObject.material.color.set(selectedColor);
+        }
+    }
+});
+
+materialSelector.addEventListener("change", (event) => {
+    selectedMaterial = materialOptions[event.target.value];
+    if (highlightedObject) {
+        // Update material instantly when selection changes
+        highlightedObject.material = selectedMaterial.clone();
+        if (selectedColor) {
             highlightedObject.material.color.set(selectedColor);
         }
     }

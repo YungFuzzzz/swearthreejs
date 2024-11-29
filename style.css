@@ -15,13 +15,22 @@ body {
   background: white;
   border-radius: 0 0 0 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* add box shadow to the left side */
+  box-shadow: 0 0 24px rgba(43, 255, 0, 1);
+  font-family: Arial, sans-serif;
+}
+
+#menu #instructions {
+  text-align: center;
+}
+
+#menu-content {
   z-index: 1000;
   font-family: Arial, sans-serif;
   display: flex; 
   flex-direction: column;
   justify-content: space-between;
-  /* add box shadow to the left side */
-  box-shadow: 0 0 24px rgba(43, 255, 0, 1);
+  opacity: 0;
 }
 
 #menu img {
@@ -36,8 +45,8 @@ body {
   font-size: 14px;
 }
 
-#menu input,
-#menu select {
+#menu-content input,
+#menu-content select {
   width: 100%;
   height: 40px;
   padding: 5px;
@@ -48,24 +57,13 @@ body {
   background-color: white;
 }
 
-#menu input:focus,
-#menu select:focus {
+#menu-content input:focus,
+#menu-content select:focus {
   outline: none;
   border: 3px solid #7cfc00;
 }
 
-#menu #apply-customization {
-  width: 100%;
-  padding: 8px;
-  background: black;
-  color: white;
-  border: none;
-  border-radius: 0;
-  font-size: 14px;
-  text-transform: uppercase;
-  cursor: pointer;
-  text-align: center;
-}
+
 
 #menu #apply-customization:hover,
 #menu #buy-btn:hover,
@@ -74,6 +72,7 @@ body {
 }
 
 .options #reset-btn {
+  padding: 4px;
   background: black;
   border: none;
   border-radius: 0;
