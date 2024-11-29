@@ -131,7 +131,7 @@ const pointLight6 = new THREE.PointLight(0xffffff, 20);
 pointLight6.position.set(-3, 5, -7.8);
 scene.add(pointLight6);
 
-camera.position.z = 2.5;
+camera.position.z = 2;
 camera.position.y = 3.5;
 camera.rotation.x = -0.2;
 
@@ -158,11 +158,11 @@ window.addEventListener('resize', () => {
 });
 
 const outlineMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,   // Outline color
+    color: 0x00ff00,   
     side: THREE.BackSide,
     linewidth: 2,
-    depthTest: false,  // To render the outline over other objects
-    opacity: 1,        // You can adjust opacity if needed
+    depthTest: false,  
+    opacity: 1,        
     transparent: true
 });
 
@@ -190,44 +190,50 @@ window.addEventListener('mousedown', (event) => {
 let highlightedObject = null;
 
 
+function resetObjectMaterial(object) {
+    if (object.material.emissive) object.material.emissive.set(0x000000);
+    if (object.material.wireframe !== undefined) object.material.wireframe = false;
+}
+
+function highlightObject(object) {
+    if (object.material.emissive) object.material.emissive.set(0x00ff00);
+    if (object.material.wireframe !== undefined) object.material.wireframe = true;
+}
+
 window.addEventListener('click', (event) => {
     raycaster.setFromCamera(mouse, camera);
-
     const intersects = raycaster.intersectObjects(scene.children, true);
     const firstIntersect = intersects[0];
 
     if (firstIntersect && components.includes(firstIntersect.object.name)) {
         if (highlightedObject === firstIntersect.object) {
-            if (highlightedObject.material.emissive) {
-                highlightedObject.material.emissive.set(0x000000);
-                rotationSpeed = 0.30; 
-            }
-            if (highlightedObject.material.wireframe !== undefined) {
-                highlightedObject.material.wireframe = false; 
-            }
+            resetObjectMaterial(highlightedObject);
+            rotationSpeed = 0.30;
             highlightedObject = null;
             hideMenu();
+            gsap.to(camera.position, {
+                duration: 0.5,
+                x: 0,
+                y: 3.5,
+                z: 2
+            })
         } else {
-            if (highlightedObject && highlightedObject.material.emissive) {
-                highlightedObject.material.emissive.set(0x000000); 
-            }
-            if (highlightedObject && highlightedObject.material.wireframe !== undefined) {
-                highlightedObject.material.wireframe = false; 
-            }
-
-            if (firstIntersect.object.material.emissive) {
-                firstIntersect.object.material.emissive.set(0x00ff00);
-                rotationSpeed = 0.01;
-            }
-            if (firstIntersect.object.material.wireframe !== undefined) {
-                firstIntersect.object.material.wireframe = true; 
-            }
-
+            if (highlightedObject) resetObjectMaterial(highlightedObject);
+            highlightObject(firstIntersect.object);
+            rotationSpeed = 0.01;
             highlightedObject = firstIntersect.object;
             showMenu();
+            
+            gsap.to(camera.position, {
+                duration: 0.5,
+                x: firstIntersect.object.position.x,
+                y: firstIntersect.object.position.y + 3.5,
+                z: firstIntersect.object.position.z + 1.2,
+            });
         }
     }
 });
+
 
 
 window.addEventListener('mousemove', (event) => {
@@ -251,7 +257,7 @@ window.addEventListener('mouseup', () => {
 });
 
 const colorPicker = document.getElementById("color-picker");
-// const applyChangesButton = document.getElementById("apply-customization");
+
 const materialSelector = document.getElementById("material-selector");
 
 let selectedColor = null; 
@@ -295,14 +301,23 @@ const materialOptions = {
     denim: denimMaterial,
 };
 
+function resetWireframeAndEmissive() {
+    if (highlightedObject) {
+        highlightedObject.material.wireframe = false;
+        highlightedObject.material.emissive.set(0x000000);
+    }
+}
+
 colorPicker.addEventListener("input", (event) => {
     selectedColor = event.target.value;
     if (highlightedObject) {
+        resetWireframeAndEmissive();  
+        highlightedObject.material.color.set(selectedColor);
+
+        
         if (selectedMaterial) {
             highlightedObject.material = selectedMaterial.clone();
-            highlightedObject.material.color.set(selectedColor);
-        } else {
-            highlightedObject.material.color.set(selectedColor);
+            highlightedObject.material.color.set(selectedColor); 
         }
     }
 });
@@ -310,21 +325,16 @@ colorPicker.addEventListener("input", (event) => {
 materialSelector.addEventListener("change", (event) => {
     selectedMaterial = materialOptions[event.target.value];
     if (highlightedObject) {
-        // Update material instantly when selection changes
+        resetWireframeAndEmissive();  
         highlightedObject.material = selectedMaterial.clone();
+
+        
         if (selectedColor) {
             highlightedObject.material.color.set(selectedColor);
         }
     }
 });
 
-window.addEventListener('wheel', (event) => {
-    if (event.deltaY > 0) {
-        camera.position.z = Math.min(camera.position.z + 0.1, maxZoom);
-    } else {
-        camera.position.z = Math.max(camera.position.z - 0.1, minZoom);
-    }
-});
 
 const resetBtn = document.getElementById('reset-btn');
 
