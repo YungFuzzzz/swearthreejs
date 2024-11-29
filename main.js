@@ -100,7 +100,7 @@ shoeLoader.load(
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xe0ffff, 2);
+const directionalLight = new THREE.DirectionalLight(0xe0ffff, 4);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
