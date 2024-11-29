@@ -23,7 +23,7 @@ renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 const stats = new Stats();
-stats.showPanel(0); // 0: FPS, 1: MS, 2: MB, 3+: custom
+stats.showPanel(0); 
 document.body.appendChild(stats.dom);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -56,7 +56,7 @@ worldLoader.load(
         scene.add(gltf.scene);
         gltf.scene.traverse((child) => {
             if (child.isMesh) {
-                child.castShadow = true;
+                child.castShadow = false;
                 child.receiveShadow = true;
             }
         });
@@ -78,7 +78,7 @@ shoeLoader.load(
         gltf.scene.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
-                child.receiveShadow = true;
+                child.receiveShadow = false;
             }
         });
 
@@ -96,17 +96,11 @@ shoeLoader.load(
     }
 );
 
-const planeGeometry = new THREE.PlaneGeometry(20, 20, 5);
-const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -Math.PI / 2;
-plane.receiveShadow = true;
-scene.add(plane);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xe0ffff, 5);
+const directionalLight = new THREE.DirectionalLight(0xe0ffff, 2);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
@@ -213,8 +207,8 @@ window.addEventListener('mousemove', (event) => {
         let deltaX = event.clientX - previousMouseX;
         let deltaY = event.clientY - previousMouseY;
 
-        shoe.rotation.y += deltaX * shoeSpeed;  // Limit horizontal rotation speed
-        shoe.rotation.x += deltaY * shoeSpeed;  // Limit vertical rotation speed
+        shoe.rotation.y += deltaX * shoeSpeed;  
+        shoe.rotation.x += deltaY * shoeSpeed;  
 
         previousMouseX = event.clientX;
         previousMouseY = event.clientY;
@@ -335,10 +329,10 @@ let lastTime = 0;
 function animate(time) {
     stats.begin();
 
-    const deltaTime = (time - lastTime) / 1000;  // Time in seconds
+    const deltaTime = (time - lastTime) / 1000;  
     lastTime = time;
 
-    // Apply scene rotation with frame-rate independent speed
+    
     scene.rotation.y += rotationSpeed * deltaTime;
 
     renderer.render(scene, camera);
