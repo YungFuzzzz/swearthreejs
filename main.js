@@ -70,6 +70,7 @@ shoeLoader.load(
     '/assets/models/swearshoe.glb',
     (gltf) => {
         shoe = gltf.scene;
+        shoe.name = 'shoe';
         shoe.scale.set(5, 5, 5);
         shoe.position.set(0, 3, 0);
         shoe.rotation.y = Math.PI / 2;
@@ -375,3 +376,4 @@ function animate(time) {
     composer.render();
     stats.end();
 }
+export { scene, camera, shoe }; // Export scene and relevant objects
