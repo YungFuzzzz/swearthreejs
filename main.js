@@ -96,7 +96,7 @@ shoeLoader.load(
 
         // Make the shoe object available globally
         window.shoe = shoe;
-        window.shoeLoaded = shoeLoaded;
+        window.shoeLoaded = true;
     },
     undefined,
     (error) => {
