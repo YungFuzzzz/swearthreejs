@@ -65,6 +65,7 @@ worldLoader.load(
 
 const shoeLoader = new GLTFLoader();
 let shoe;
+let shoeLoaded = false;
 
 shoeLoader.load(
     '/assets/models/swearshoe.glb',
@@ -90,6 +91,12 @@ shoeLoader.load(
             yoyo: true,
             ease: 'power2.inOut',
         });
+
+        shoeLoaded = true;
+
+        // Make the shoe object available globally
+        window.shoe = shoe;
+        window.shoeLoaded = shoeLoaded;
     },
     undefined,
     (error) => {
@@ -376,4 +383,4 @@ function animate(time) {
     composer.render();
     stats.end();
 }
-export { scene, camera, shoe }; // Export scene and relevant objects
+export { shoeLoaded, shoe }; // Export scene and relevant objects

@@ -1,5 +1,3 @@
-import { scene } from './main.js';
-
 document.getElementById('buy-btn').addEventListener('click', async () => {
     // Get selected values from inputs
     const color = document.getElementById('color-picker').value;
@@ -46,15 +44,33 @@ document.getElementById('buy-btn').addEventListener('click', async () => {
 });
 
 function updateSceneWithOrderData(order) {
-    // Example: Update the 3D shoe with the selected properties
-    const shoe = scene.getObjectByName('shoe');
-    if (shoe) {
+    // Check if the shoe is available globally (from window.shoe)
+    console.log('Checking if shoe is available...');
+    const shoe = window.shoe;  // Access the global shoe object
+    const shoeLoaded = window.shoeLoaded;  // Access the global shoeLoaded variable
+
+    if (shoe && shoeLoaded) {
+        console.log('Shoe is available, updating...');
+
         shoe.material.color.set(order.color); // Set color
+        console.log('Color updated to:', order.color);
+
         // Apply texture based on material (assuming textures are preloaded)
         const textureLoader = new THREE.TextureLoader();
         const texturePath = `/assets/materials/${order.material}/${order.material}_diffuse.jpg`;
-        shoe.material.map = textureLoader.load(texturePath);
+
+        // Ensure the texture path is correct and the texture is applied
+        console.log('Loading texture from:', texturePath);
+        shoe.material.map = textureLoader.load(texturePath, () => {
+            console.log('Texture loaded successfully!');
+        });
+
         shoe.material.needsUpdate = true;
+
+        // Scale shoe based on size
         shoe.scale.set(order.size / 40, order.size / 40, order.size / 40); // Scale shoe based on size
+        console.log('Shoe scaled to:', order.size);
+    } else {
+        console.error('Shoe is not available or not loaded yet.');
     }
 }
