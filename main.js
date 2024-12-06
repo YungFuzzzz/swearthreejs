@@ -326,13 +326,14 @@ materialSelector.addEventListener("change", (event) => {
     if (highlightedObject) {
         resetWireframeAndEmissive();  
         highlightedObject.material = selectedMaterial.clone();
-
+        highlightedObject.material.name = event.target.value;  // Ensure the material name is updated
         
         if (selectedColor) {
             highlightedObject.material.color.set(selectedColor);
         }
     }
 });
+
 
 
 const resetBtn = document.getElementById('reset-btn');
@@ -384,3 +385,4 @@ function animate(time) {
     stats.end();
 }
 export { shoeLoaded, shoe }; // Export scene and relevant objects
+
