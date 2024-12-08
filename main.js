@@ -94,7 +94,6 @@ shoeLoader.load(
 
         shoeLoaded = true;
 
-        // Make the shoe object available globally
         window.shoe = shoe;
         window.shoeLoaded = true;
     },
@@ -326,7 +325,7 @@ materialSelector.addEventListener("change", (event) => {
     if (highlightedObject) {
         resetWireframeAndEmissive();  
         highlightedObject.material = selectedMaterial.clone();
-        highlightedObject.material.name = event.target.value;  // Ensure the material name is updated
+        highlightedObject.material.name = event.target.value;
         
         if (selectedColor) {
             highlightedObject.material.color.set(selectedColor);
@@ -384,5 +383,5 @@ function animate(time) {
     composer.render();
     stats.end();
 }
-export { shoeLoaded, shoe }; // Export scene and relevant objects
+export { shoeLoaded, shoe };
 

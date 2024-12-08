@@ -32,13 +32,11 @@ document.getElementById('buy-btn').addEventListener('click', async () => {
     console.log('Outside 2 Color:', outside2Color, 'Outside 2 Material:', outside2Material);
     console.log('Outside 3 Color:', outside3Color, 'Outside 3 Material:', outside3Material);
 
-    // Validate inputs
     if (!color || !material || !size) {
         alert('Please make a selection for all fields.');
         return;
     }
 
-    // Prepare the order data object with component details
     const orderData = {
         size,
         status: 'pending', // Default status, can be updated later
